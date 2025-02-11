@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
+import os
+
 from django.http import JsonResponse
 from django.shortcuts import render
-from django.core.mail import send_mail
 
+from .tasks import send_mass_email
 from .models import Subscriber
 from .forms import MailingForm, SubscriberForm
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def mailing_list(request):
@@ -17,18 +22,16 @@ def create_mailing(request):
         if form.is_valid():
             mailing = form.save()
 
-            subscribers = Subscriber.objects.all()
-            recipient_list = [s.email for s in subscribers]
-
-            send_mail(
-                subject=mailing.subject,
-                message=mailing.body,
-                from_email='email@gmail.com',
-                recipient_list=recipient_list,
-                fail_silently=False,
+            send_mass_email.apply_async(
+                kwargs={
+                    "subject": mailing.subject,
+                    "message": mailing.body,
+                    "sender_email": os.getenv('EMAIL_HOST_USER'),
+                },
+                serializer="json"
             )
 
-            return JsonResponse({"status": "success", "message": "Рассылка отправлена!"})
+            return JsonResponse({"status": "success", "message": "Рассылка запущена!"})
         else:
             return JsonResponse({"status": "error", "errors": form.errors})
 
