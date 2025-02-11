@@ -8,7 +8,7 @@ class Subscriber(models.Model):
     birthday = models.DateField(null=True, blank=True)
 
     def __str__(self):
-        return self.email
+        return self.first_name + " " + self.last_name + " " + self.email
 
 
 class Mailing(models.Model):

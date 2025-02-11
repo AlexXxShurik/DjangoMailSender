@@ -6,6 +6,8 @@
     <title>Email Рассылка</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+    <script src="/static/js/mailing.js"></script>
 </head>
 <body>
 
@@ -22,6 +24,7 @@
                     <h4 class="modal-title">Создать рассылку</h4>
                 </div>
                 <div class="modal-body">
+                    {% csrf_token %}
                     <form id="mailingForm">
                         <div class="form-group">
                             <label>Тема</label>
@@ -39,8 +42,6 @@
     </div>
 
 </div>
-
-<script src="/static/js/mailing.js"></script>
 
 </body>
 </html>

@@ -1,12 +1,14 @@
+# -*- coding: utf-8 -*-
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.core.mail import send_mail
+
 from .models import Subscriber
-from .forms import MailingForm
+from .forms import MailingForm, SubscriberForm
 
 
 def mailing_list(request):
-    return render(request, 'mail_sender/mailing_list.html')
+    return render(request, 'mailing_list.html')
 
 
 def create_mailing(request):
@@ -29,5 +31,34 @@ def create_mailing(request):
             return JsonResponse({"status": "success", "message": "Рассылка отправлена!"})
         else:
             return JsonResponse({"status": "error", "errors": form.errors})
+
+    return JsonResponse({"status": "error", "message": "Используйте POST-запрос"})
+
+
+def subscribers_list(request):
+    return render(request, 'subscribers_list.html')
+
+
+def get_subscribers(request):
+    subscribers = Subscriber.objects.all().values("first_name", "last_name", "email", "birthday")
+    data = [
+        {
+            "first_name": sub["first_name"] or "",
+            "last_name": sub["last_name"] or "",
+            "email": sub["email"],
+            "birthday": sub["birthday"].strftime("%Y-%m-%d") if sub["birthday"] else None
+        }
+        for sub in subscribers
+    ]
+    return JsonResponse(data, safe=False)
+
+
+def add_subscriber(request):
+    if request.method == "POST":
+        form = SubscriberForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({"status": "success", "message": "Подписчик добавлен!"})
+        return JsonResponse({"status": "error", "errors": form.errors})
 
     return JsonResponse({"status": "error", "message": "Используйте POST-запрос"})
