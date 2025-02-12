@@ -6,9 +6,10 @@ class Subscriber(models.Model):
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
     birthday = models.DateField(null=True, blank=True)
+    last_opened = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        return self.first_name + " " + self.last_name + " " + self.email
+        return self.email
 
 
 class Mailing(models.Model):

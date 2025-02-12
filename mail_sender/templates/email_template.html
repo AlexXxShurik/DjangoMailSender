@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ subject }}</title>
+</head>
+<body>
+    <p>Здравствуйте, {{ first_name }} {{ last_name }}!</p>
+    <p>{{ message }}</p>
+
+    {% if birthday %}
+        <p>Ваш день рождения: {{ birthday }}</p>
+    {% endif %}
+
+    <img src="{{ tracker_url }}" width="1" height="1" style="display:none;">
+</body>
+</html>

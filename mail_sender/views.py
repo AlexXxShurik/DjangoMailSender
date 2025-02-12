@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 import os
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
+from django.utils import timezone
+from dotenv import load_dotenv
 
 from .tasks import send_mass_email
 from .models import Subscriber
 from .forms import MailingForm, SubscriberForm
-from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -65,3 +66,14 @@ def add_subscriber(request):
         return JsonResponse({"status": "error", "errors": form.errors})
 
     return JsonResponse({"status": "error", "message": "Используйте POST-запрос"})
+
+
+def tracker(request):
+    """Фиксирует открытие письма по email, переданному в GET-параметре"""
+    email = request.GET.get("email")
+
+    if email:
+        Subscriber.objects.filter(email=email).update(last_opened=timezone.now())
+
+    pixel = b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\xFF\xFF\xFF\x00\x00\x00\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3B'
+    return HttpResponse(pixel, content_type="image/gif")

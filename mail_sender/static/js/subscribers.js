@@ -11,6 +11,7 @@ $(document).ready(function () {
                             <td>${sub.last_name || "-"}</td>
                             <td>${sub.email}</td>
                             <td>${sub.birthday || "-"}</td>
+                            <td>${sub.last_opened || "-"}</td>
                          </tr>`;
             });
             $("#subscribersTable").html(rows);
